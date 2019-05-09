@@ -212,9 +212,14 @@ var blue = "stroke:#FFFFFF; fill: #0000FF";
 var green = "stroke:#FFFFFF; fill: #00CC00";
 var red = "stroke:#FFFFFF; fill: #FF0000";
 
-var numberFormat = new Intl.NumberFormat('en', { maximumFractionDigits: 0 });
+var normalNumberFormat = new Intl.NumberFormat('en', { maximumFractionDigits: 0 });
+var smallNumberFormat = new Intl.NumberFormat('en', { maximumSignificantDigits: 2 });
 function formatNumber(n) {
-    return numberFormat.format(n)
+    if (n > 1) {
+        return normalNumberFormat.format(n)
+    } else {
+        return smallNumberFormat.format(n);
+    }
 }
 
 var units = ['ns', 'μs', 'ms', 's'];
@@ -225,16 +230,16 @@ function Metric(ns, caption, forceDownOne) {
     this.forceDownOne = forceDownOne;
     // Diagrams jump up by factors of 100, starting with 1ns as smallest
     // (e.g. 1ns, 100ns, 10μs etc.)
-    var drawingScale = Math.min(Math.floor(Math.log10(ns) / Math.log10(GRID_SIZE * GRID_SIZE)), colors.length - 1);
+    var drawingScale = Math.max(0, Math.min(Math.floor(Math.log10(ns) / Math.log10(GRID_SIZE * GRID_SIZE)), colors.length - 1));
     if (forceDownOne) {
         // Used to draw 100 squares of smaller size, which will morph
         // into 1 square representing larger unit.
         drawingScale -= 1;
     }
-    var unitScale = Math.floor(Math.log10(ns) / 3);
+    var unitScale = Math.max(0, Math.floor(Math.log10(ns) / 3));
     var nearestUnit = units[unitScale];
     this.color = colors[drawingScale];
-    this.boxes = ns / (100 ** drawingScale);
+    this.boxCount = ns / (100 ** drawingScale);
     var inUnit = ns / (1000 ** unitScale)
     var unitDisplay = formatNumber(inUnit) + " " + nearestUnit;
     var nsDisplay = '';
@@ -245,6 +250,7 @@ function Metric(ns, caption, forceDownOne) {
 }
 
 function getMetrics() {
+    var cycle = new Metric(getCycle(), "One CPU clock cycle: ", false);
     var ns = new Metric(1, "", false);
     // Source for L1: http://cache.freescale.com/files/32bit/doc/app_note/AN2180.pdf
     var L1 = new Metric(3 * getCycle(), "L1 cache reference: ", false);
@@ -273,7 +279,7 @@ function getMetrics() {
         "Read " + formatNumber(getPayloadBytes()) + " bytes sequentially from disk: ", false);
     var wan = new Metric(getWanRTT(), "Packet roundtrip CA to Netherlands: ", false);
     var metrics = [
-        ns, L1, branch, L2, mutex, ns_100, ns100, mem, micro, snappy, ns100_100, tenMicro, network,
+        cycle, ns, L1, branch, L2, mutex, ns_100, ns100, mem, micro, snappy, ns100_100, tenMicro, network,
         ssdRandom, mbMem, rtt, tenMicro_100, ms, mbSSD, seek, mbDisk, wan
     ];
     return metrics;
@@ -288,7 +294,7 @@ function render() {
     metrics.forEach(function(metric, i) {
         $container.append("div").attr("class", "metric hidden").attr("data-number", i).each(function(n, j) {
             var $this = d3.select(this);
-            $this.append("div").attr("class", "boxes").append(() => makeBoxes(metric.boxes, metric.color).node());
+            $this.append("div").attr("class", "boxes").append(() => makeBoxes(metric.boxCount, metric.color).node());
             $this.append("div").attr("class", "caption").text(metric.displayString);
         });
     });
