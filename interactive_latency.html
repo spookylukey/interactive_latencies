@@ -225,23 +225,9 @@
      var green = "stroke:#FFFFFF; fill: #00CC00";
      var red = "stroke:#FFFFFF; fill: #FF0000";
 
-     function addCommas(nStr) {
-         // First, make fixed length
-         // TODO: bad separation of concerns
-         if (nStr < 1) {
-             nStr = nStr.toFixed(1);
-         } else {
-             nStr = nStr.toFixed(0);
-         }
-         nStr += '';
-         x = nStr.split('.');
-         x1 = x[0];
-         x2 = x.length > 1 ? '.' + x[1] : '';
-         var rgx = /(\d+)(\d{3})/;
-         while (rgx.test(x1)) {
-             x1 = x1.replace(rgx, '$1' + ',' + '$2');
-         }
-         return x1 + x2;
+     var numberFormat = new Intl.NumberFormat('en', {maximumFractionDigits: 0});
+     function addCommas(n) {
+         return numberFormat.format(n)
      }
 
      function Metric(ns, boxType, displayString, div, optionalSuffix) {
