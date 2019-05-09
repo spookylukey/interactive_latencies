@@ -1,0 +1,123 @@
+
+:root {
+    /* need to sync with stepTime in run.ts */
+    --stepTime: 4s;
+    font-size: 30px;
+}
+
+
+.metric {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.metric.hidden {
+    display: none;
+}
+
+.metric .boxes {
+    width: 100%;
+    text-align: center;
+    line-height: 0;
+}
+
+.metric .caption {
+    position: absolute;
+    top: 1em;
+    text-align: center;
+}
+
+.metric.show {
+    display: flex;
+}
+
+.metric.show > div {
+    animation: fadeInAndOut var(--stepTime) ease forwards;
+}
+.metric.show.shrink > div.boxes {
+    animation: fadeInAndShrink var(--stepTime) ease forwards;
+}
+.metric.show.shrink > div.caption {
+    animation: fadeInAndQuicklyOut var(--stepTime) ease forwards;
+}
+.metric.show.last > div {
+    animation: fadeIn var(--stepTime) ease forwards;
+}
+
+/* 100% is stepTime */
+/* However, we finish in 90% time for most animations,
+   so that we can overlap them in some cases */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInAndOut {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeInAndQuicklyOut {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    99% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeInAndShrink {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1);
+    }
+    80% {
+        transform: scale(0.1);
+        opacity: 1;
+    }
+    90% {
+        transform: scale(0.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.1);
+        opacity: 0;
+    }
+}
