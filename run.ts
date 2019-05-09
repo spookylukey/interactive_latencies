@@ -278,9 +278,19 @@ function getMetrics() {
     var mbDisk = new Metric(getDiskTransmissionDelay(getPayloadBytes()),
         "Read " + formatNumber(getPayloadBytes()) + " bytes sequentially from disk: ", false);
     var wan = new Metric(getWanRTT(), "Packet roundtrip CA to Netherlands: ", false);
+
+    // Human comparisons
+
+    // http://news.mit.edu/2014/in-the-blink-of-an-eye-0116
+    var imageRecognition = new Metric(13 * 10 ** 6, "Time needed by human eye to recognize an image: ", false);
+
+    // https://en.wikipedia.org/wiki/Blinking#Central_nervous_system_control
+    var eyeblink = new Metric(100 * 10 ** 6, "Blink of an eye: ", false);
+
     var metrics = [
         cycle, ns, L1, branch, L2, mutex, ns_100, ns100, mem, micro, snappy, ns100_100, tenMicro, network,
-        ssdRandom, mbMem, rtt, tenMicro_100, ms, mbSSD, seek, mbDisk, wan
+        ssdRandom, mbMem, rtt, tenMicro_100, ms, mbSSD, seek, mbDisk, wan,
+        imageRecognition, eyeblink,
     ];
     return metrics;
 }
