@@ -1,5 +1,8 @@
 // -*- coding: utf-8 -*-
 
+// Named .ts (TypeScript file) just for better support while writing in my
+// editor - TS compilation to JS is not actually set up for this repo.
+
 // Notes:
 //   - All of Norvig's original numbers were from 2002
 //   - Any numbers without a citation are from Norvig's article:
